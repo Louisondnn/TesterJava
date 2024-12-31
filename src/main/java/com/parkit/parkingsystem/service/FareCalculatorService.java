@@ -21,7 +21,7 @@ import java.time.Duration;
                 // Initialize fare
                 double fare= 0;
                 System.out.println("Total minutes: " + totalMinutes);
-               
+                if (totalMinutes >= 30) {
                     double ratePerHour = 0;
             
                     switch (ticket.getParkingSpot().getParkingType()) {
@@ -40,7 +40,7 @@ import java.time.Duration;
                     fare = (hours * ratePerHour) + (minutes * (ratePerHour / 60.0)); // Charge for remaining minutes
                     System.out.println("Calculated fare: " + fare);
                     System.out.println("Rate per hour: " + ratePerHour);
-                
+                }
                 
                 ticket.setPrice(fare);
                 return fare; 
