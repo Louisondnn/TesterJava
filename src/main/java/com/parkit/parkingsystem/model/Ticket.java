@@ -1,15 +1,28 @@
 package com.parkit.parkingsystem.model;
 
-import java.util.Calendar;
-import java.util.Date;
+import com.parkit.parkingsystem.constants.ParkingType;
+
+import java.time.LocalDateTime;
+
 
 public class Ticket {
     private int id;
+    private ParkingType parkingType;
     private ParkingSpot parkingSpot;
     private String vehicleRegNumber;
     private double price;
-    private Date inTime;
-    private Date outTime;
+    private LocalDateTime inTime;
+    private LocalDateTime outTime;
+
+    public Ticket(String vehicleRegNumber, ParkingSpot parkingSpot, double price) {
+        this.vehicleRegNumber = vehicleRegNumber;
+        this.parkingSpot = parkingSpot;
+        this.price = price; 
+
+    }
+    public ParkingType getParkingType() {
+        return parkingType;
+    }
 
     public int getId() {
         return id;
@@ -43,19 +56,19 @@ public class Ticket {
         this.price = price;
     }
 
-    public Date getInTime() {
+    public LocalDateTime getInTime() {
         return inTime;
     }
-
-    public void setInTime(Date inTime) {
-        this.inTime = inTime;
+    public void setInTime(LocalDateTime inTime) {
+        this.inTime = inTime; // Now accepts LocalDateTime
     }
 
-    public Date getOutTime() {
+    public void setOutTime(LocalDateTime outTime) {
+        this.outTime = outTime; // This should also accept LocalDateTime
+    }
+
+    public LocalDateTime getOutTime() {
         return outTime;
     }
 
-    public void setOutTime(Date outTime) {
-        this.outTime = outTime;
-    }
 }
