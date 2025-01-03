@@ -1,11 +1,27 @@
 package com.parkit.parkingsystem.service;
 
+import com.parkit.parkingsystem.constants.DBConstants;
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.model.Ticket;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
         public class FareCalculatorService {
         
+            private Map<String, Boolean> recurrentUsers; 
+            private Map<String, Boolean> usersFromDatabase; 
+            private static final double RECURRENT_USER_DISCOUNT = 0.95; // 5% de remise
+
+              public FareCalculatorService() {
+                this.recurrentUsers = new HashMap<>();
+                this.usersFromDatabase = new HashMap<>();
+            }
             public double calculateFare(Ticket ticket) {
                 if (ticket == null || ticket.getInTime() == null || ticket.getOutTime() == null) {
                     throw new IllegalArgumentException("Ticket or its in/out time cannot be null");
@@ -37,13 +53,84 @@ import java.time.Duration;
                     long hours = totalMinutes / 60;
                     long minutes = totalMinutes % 60;
             
-                    fare = (hours * ratePerHour) + (minutes * (ratePerHour / 60.0)); // Charge for remaining minutes
+                    fare = (hours * ratePerHour) + (minutes * (ratePerHour / 60.0));
                     System.out.println("Calculated fare: " + fare);
                     System.out.println("Rate per hour: " + ratePerHour);
+                }
+                if (isRecurrentUser (ticket.getVehicleRegNumber())) {
+                    fare *= RECURRENT_USER_DISCOUNT; 
+                    System.out.println("Remise de 5% appliquée pour l'utilisateur récurrent.");
                 }
                 
                 ticket.setPrice(fare);
                 return fare; 
             }            
-        }
+   
+      
+                public boolean isRecurrentUser (String licensePlate) {
+                return recurrentUsers.containsKey(licensePlate) && recurrentUsers.get(licensePlate);
+                }
+
+
+            // public class RecurrentUser (double normalTariff) {
+            //     this.recurrentUsers = new HashMap<>();
+            //     this.normalTariff = normalTariff;
+            //     this.usersFromDatabase = new HashMap<>(); 
         
+            // }
+            // public void loadRecurrentUsersFromDataBase() throws Exception {
+            //     Connection con = null;
+            //     try {
+            //         con = dataBaseConfig.getConnection();
+            //         PreparedStatement ps = con.prepareStatement(DBConstants.RECCURENT_USER);
+            //         ResultSet rs = ps.executeQuery();
+            //         while (rs.next()) {
+            //             String id = rs.getString("VEHICLE_REG_NUMBER");
+            //             this.usersFromDatabase.put(id, true);
+            //             }
+            //         } catch (SQLException e) {
+            //             e.printStackTrace(); 
+            //         } finally {
+            //             if (con != null) {
+            //                 con.close(); 
+            //             }
+            //         }
+           
+            // }
+            public void enterGarage(String licensePlate) {
+                if (usersFromDatabase.containsKey(licensePlate)) {
+                    System.out.println("Heureux de vous revoir ! En tant qu'utilisateur régulier de notre parking, vous allez obtenir une remise de 5%");
+                    recurrentUsers.put(licensePlate, true); // Marquer comme récurrent
+                    System.out.println("User  marked as recurrent: " + licensePlate);
+                } else {
+                    recurrentUsers.put(licensePlate, false); // Premier passage
+                    System.out.println("Bienvenue dans notre garage !");
+                }
+            }
+        
+           
+        
+            public void exitGarage(String licensePlate, double normalTariff) {
+                double finalTariff = calculateTariff(licensePlate, normalTariff); // Calculer le tarif final
+                if (recurrentUsers.containsKey(licensePlate)) {
+                    if (recurrentUsers.get(licensePlate)) {
+                        System.out.println("Merci pour votre visite ! Vous avez obtenu une remise de 5% sur votre tarif.");
+                    } else {
+                        System.out.println("Merci pour votre visite !");
+                    }
+                } else {
+                    System.out.println("Merci pour votre visite !");
+                }
+                System.out.println("Le tarif à payer est : " + finalTariff); // Afficher le tarif final
+            }
+             private double calculateTariff(String licensePlate, double normalTariff) {
+                if (recurrentUsers.containsKey(licensePlate) && recurrentUsers.get(licensePlate)) {
+                    return normalTariff * RECURRENT_USER_DISCOUNT; // 5% remise pour les utilisateurs récurrents
+                } else {
+                    return normalTariff; // Pas de remise pour les nouveaux utilisateurs
+                }
+            }
+
+        }
+           
+             

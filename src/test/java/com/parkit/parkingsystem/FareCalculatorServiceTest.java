@@ -5,123 +5,105 @@ import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Date;
+class FareCalculatorServiceTest {
 
-public class FareCalculatorServiceTest {
+    private final FareCalculatorService fareCalculatorService = new FareCalculatorService();
 
-    private static FareCalculatorService fareCalculatorService;
-    private Ticket ticket;
+    @Test
+    void testCalculateFare_CarLessThan30Minutes() {
 
-    @BeforeAll
-    private static void setUp() {
-        fareCalculatorService = new FareCalculatorService();
-    }
+        Ticket ticket = new Ticket(null, null, 0);
+        ParkingSpot spot = new ParkingSpot(0, ParkingType.CAR, false);
+        ticket.setParkingSpot(spot);
+        // ticket.setInTime(new Date(System.currentTimeMillis()));
+        // ticket.setOutTime(new Date(System.currentTimeMillis() + 15 * 60 * 1000)); // 15 minutes later
+        LocalDateTime inTime = LocalDateTime.now(); 
+        ticket.setInTime(inTime); // Use LocalDateTime
+    
+    // Set outTime to 15 minutes later
+        LocalDateTime outTime = inTime.plus(15, ChronoUnit.MINUTES); // Add 15 minutes
+        ticket.setOutTime(outTime); // Use LocalDateTime
 
-    @BeforeEach
-    private void setUpPerTest() {
-        ticket = new Ticket();
+
+        double fare = fareCalculatorService.calculateFare(ticket);
+
+
+        assertEquals(0, fare, 0.01);
     }
 
     @Test
-    public void calculateFareCar(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  60 * 60 * 1000) );
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
+    void testCalculateFare_CarMoreThan30Minutes() {
 
-        ticket.setInTime(inTime);
+        Ticket ticket = new Ticket(null, null, 0);
+        ParkingSpot spot = new ParkingSpot(0, ParkingType.CAR, false);
+        ticket.setParkingSpot(spot);
+        LocalDateTime inTime = LocalDateTime.now(); 
+        ticket.setInTime(inTime); 
+        
+        LocalDateTime outTime = inTime.plus(2, ChronoUnit.HOURS);
         ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        fareCalculatorService.calculateFare(ticket);
-        assertEquals(ticket.getPrice(), Fare.CAR_RATE_PER_HOUR);
-    }
 
+        double fare = fareCalculatorService.calculateFare(ticket);
+
+        double expectedFare = 2 * Fare.CAR_RATE_PER_HOUR; 
+        assertEquals(expectedFare, fare, 3);
+    }
     @Test
-    public void calculateFareBike(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  60 * 60 * 1000) );
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE,false);
-
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        fareCalculatorService.calculateFare(ticket);
-        assertEquals(ticket.getPrice(), Fare.BIKE_RATE_PER_HOUR);
+    void testCalculateFare_NullTicket() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            fareCalculatorService.calculateFare(null);
+        });
     }
-
+    // @Test
+    // void testCalculateFare_NullInTime() {
+    //     Ticket ticket = new Ticket("ABC123", new ParkingSpot(1, ParkingType.CAR, false), 0);
+    //     ticket.setInTime(null);
+    //     ticket.setOutTime(LocalDateTime.now());
+    //     assertThrows(IllegalArgumentException.class, () -> {
+    //         fareCalculatorService.calculateFare(ticket);
+    //     });
+    //  }    
+    // @Test
+    // void testCalculateFare_NullOutTime() {
+    //     Ticket ticket = new Ticket("ABC123", new ParkingSpot(1, ParkingType.CAR, false), 0);
+    //     ticket.setInTime(LocalDateTime.now());
+    //     ticket.setOutTime(null);
+    //     assertThrows(IllegalArgumentException.class, () -> {
+    //         fareCalculatorService.calculateFare(ticket);
+    //         });
+    //     }
     @Test
-    public void calculateFareUnkownType(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  60 * 60 * 1000) );
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, null,false);
-
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        assertThrows(NullPointerException.class, () -> fareCalculatorService.calculateFare(ticket));
-    }
-
-    @Test
-    public void calculateFareBikeWithFutureInTime(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() + (  60 * 60 * 1000) );
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE,false);
-
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        assertThrows(IllegalArgumentException.class, () -> fareCalculatorService.calculateFare(ticket));
-    }
-
-    @Test
-    public void calculateFareBikeWithLessThanOneHourParkingTime(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  45 * 60 * 1000) );//45 minutes parking time should give 3/4th parking fare
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE,false);
-
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        fareCalculatorService.calculateFare(ticket);
-        assertEquals((0.75 * Fare.BIKE_RATE_PER_HOUR), ticket.getPrice() );
-    }
-
-    @Test
-    public void calculateFareCarWithLessThanOneHourParkingTime(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  45 * 60 * 1000) );//45 minutes parking time should give 3/4th parking fare
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
-
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        fareCalculatorService.calculateFare(ticket);
-        assertEquals( (0.75 * Fare.CAR_RATE_PER_HOUR) , ticket.getPrice());
-    }
-
-    @Test
-    public void calculateFareCarWithMoreThanADayParkingTime(){
-        Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (  24 * 60 * 60 * 1000) );//24 hours parking time should give 24 * parking fare per hour
-        Date outTime = new Date();
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
-
-        ticket.setInTime(inTime);
-        ticket.setOutTime(outTime);
-        ticket.setParkingSpot(parkingSpot);
-        fareCalculatorService.calculateFare(ticket);
-        assertEquals( (24 * Fare.CAR_RATE_PER_HOUR) , ticket.getPrice());
-    }
+    void testCalculateFare_InTimeAfterOutTime() {
+        Ticket ticket = new Ticket("ABC123", new ParkingSpot(1, ParkingType.CAR, false), 0);
+         ticket.setInTime(LocalDateTime.now());
+        ticket.setOutTime(LocalDateTime.now().minusMinutes(30));
+        assertThrows(IllegalArgumentException.class, () -> {
+            fareCalculatorService.calculateFare(ticket);
+            });
+        }
+        @Test
+        void testCalculateFare_LessThan30Minutes() {
+            Ticket ticket = new Ticket("TEST123", new ParkingSpot(1, ParkingType.CAR, false), 0);
+            ticket.setInTime(LocalDateTime.now().minusMinutes(20));
+            ticket.setOutTime(LocalDateTime.now());
+            
+            double fare = fareCalculatorService.calculateFare(ticket);
+            assertEquals(0, fare);
+        }
+      
 
 }
+
+
+

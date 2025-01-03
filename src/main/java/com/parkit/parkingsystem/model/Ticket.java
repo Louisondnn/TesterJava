@@ -17,6 +17,7 @@ public class Ticket {
     public Ticket(String vehicleRegNumber, ParkingSpot parkingSpot, double price) {
         this.vehicleRegNumber = vehicleRegNumber;
         this.parkingSpot = parkingSpot;
+        this.parkingType = ParkingType.DEFAULT;
         this.price = price; 
 
     }

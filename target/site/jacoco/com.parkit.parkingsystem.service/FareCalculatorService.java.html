@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FareCalculatorService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">parking-system</a> &gt; <a href="index.source.html" class="el_package">com.parkit.parkingsystem.service</a> &gt; <span class="el_source">FareCalculatorService.java</span></div><h1>FareCalculatorService.java</h1><pre class="source lang-java linenums">package com.parkit.parkingsystem.service;
+
+import com.parkit.parkingsystem.constants.DBConstants;
+import com.parkit.parkingsystem.constants.Fare;
+import com.parkit.parkingsystem.model.Ticket;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
+        public class FareCalculatorService {
+        
+            private Map&lt;String, Boolean&gt; recurrentUsers; 
+            private Map&lt;String, Boolean&gt; usersFromDatabase; 
+            private static final double RECURRENT_USER_DISCOUNT = 0.95; // 5% de remise
+
+<span class="fc" id="L21">              public FareCalculatorService() {</span>
+<span class="fc" id="L22">                this.recurrentUsers = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L23">                this.usersFromDatabase = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L24">            }</span>
+            public double calculateFare(Ticket ticket) {
+<span class="pc bpc" id="L26" title="2 of 6 branches missed.">                if (ticket == null || ticket.getInTime() == null || ticket.getOutTime() == null) {</span>
+<span class="fc" id="L27">                    throw new IllegalArgumentException(&quot;Ticket or its in/out time cannot be null&quot;);</span>
+                }
+<span class="fc bfc" id="L29" title="All 2 branches covered.">                if (ticket.getInTime().isAfter(ticket.getOutTime())) {</span>
+<span class="fc" id="L30">                    throw new IllegalArgumentException(&quot;In time cannot be greater than out time&quot;);</span>
+                }
+        
+                // Calculate the duration of parking
+<span class="fc" id="L34">                Duration duration = Duration.between(ticket.getInTime(), ticket.getOutTime());</span>
+<span class="fc" id="L35">                long totalMinutes = duration.toMinutes();</span>
+        
+                // Initialize fare
+<span class="fc" id="L38">                double fare= 0;</span>
+<span class="fc" id="L39">                System.out.println(&quot;Total minutes: &quot; + totalMinutes);</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">                if (totalMinutes &gt;= 30) {</span>
+<span class="fc" id="L41">                    double ratePerHour = 0;</span>
+            
+<span class="pc bpc" id="L43" title="2 of 3 branches missed.">                    switch (ticket.getParkingSpot().getParkingType()) {</span>
+                        case CAR:
+<span class="fc" id="L45">                            ratePerHour = Fare.CAR_RATE_PER_HOUR;</span>
+<span class="fc" id="L46">                            break;</span>
+                        case BIKE:
+<span class="nc" id="L48">                            ratePerHour = Fare.BIKE_RATE_PER_HOUR;</span>
+<span class="nc" id="L49">                            break;</span>
+                        default:
+<span class="nc" id="L51">                            throw new IllegalArgumentException(&quot;Unknown parking type: &quot; + ticket.getParkingSpot().getParkingType());</span>
+                    }
+<span class="fc" id="L53">                    long hours = totalMinutes / 60;</span>
+<span class="fc" id="L54">                    long minutes = totalMinutes % 60;</span>
+            
+<span class="fc" id="L56">                    fare = (hours * ratePerHour) + (minutes * (ratePerHour / 60.0));</span>
+<span class="fc" id="L57">                    System.out.println(&quot;Calculated fare: &quot; + fare);</span>
+<span class="fc" id="L58">                    System.out.println(&quot;Rate per hour: &quot; + ratePerHour);</span>
+                }
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">                if (isRecurrentUser (ticket.getVehicleRegNumber())) {</span>
+<span class="nc" id="L61">                    fare *= RECURRENT_USER_DISCOUNT; </span>
+<span class="nc" id="L62">                    System.out.println(&quot;Remise de 5% appliquée pour l'utilisateur récurrent.&quot;);</span>
+                }
+                
+<span class="fc" id="L65">                ticket.setPrice(fare);</span>
+<span class="fc" id="L66">                return fare; </span>
+            }            
+   
+      
+                public boolean isRecurrentUser (String licensePlate) {
+<span class="pc bpc" id="L71" title="3 of 4 branches missed.">                return recurrentUsers.containsKey(licensePlate) &amp;&amp; recurrentUsers.get(licensePlate);</span>
+                }
+
+
+            // public class RecurrentUser (double normalTariff) {
+            //     this.recurrentUsers = new HashMap&lt;&gt;();
+            //     this.normalTariff = normalTariff;
+            //     this.usersFromDatabase = new HashMap&lt;&gt;(); 
+        
+            // }
+            // public void loadRecurrentUsersFromDataBase() throws Exception {
+            //     Connection con = null;
+            //     try {
+            //         con = dataBaseConfig.getConnection();
+            //         PreparedStatement ps = con.prepareStatement(DBConstants.RECCURENT_USER);
+            //         ResultSet rs = ps.executeQuery();
+            //         while (rs.next()) {
+            //             String id = rs.getString(&quot;VEHICLE_REG_NUMBER&quot;);
+            //             this.usersFromDatabase.put(id, true);
+            //             }
+            //         } catch (SQLException e) {
+            //             e.printStackTrace(); 
+            //         } finally {
+            //             if (con != null) {
+            //                 con.close(); 
+            //             }
+            //         }
+           
+            // }
+            public void enterGarage(String licensePlate) {
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                if (usersFromDatabase.containsKey(licensePlate)) {</span>
+<span class="nc" id="L102">                    System.out.println(&quot;Heureux de vous revoir ! En tant qu'utilisateur régulier de notre parking, vous allez obtenir une remise de 5%&quot;);</span>
+<span class="nc" id="L103">                    recurrentUsers.put(licensePlate, true); // Marquer comme récurrent</span>
+<span class="nc" id="L104">                    System.out.println(&quot;User  marked as recurrent: &quot; + licensePlate);</span>
+                } else {
+<span class="nc" id="L106">                    recurrentUsers.put(licensePlate, false); // Premier passage</span>
+<span class="nc" id="L107">                    System.out.println(&quot;Bienvenue dans notre garage !&quot;);</span>
+                }
+<span class="nc" id="L109">            }</span>
+        
+           
+        
+            public void exitGarage(String licensePlate, double normalTariff) {
+<span class="nc" id="L114">                double finalTariff = calculateTariff(licensePlate, normalTariff); // Calculer le tarif final</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                if (recurrentUsers.containsKey(licensePlate)) {</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                    if (recurrentUsers.get(licensePlate)) {</span>
+<span class="nc" id="L117">                        System.out.println(&quot;Merci pour votre visite ! Vous avez obtenu une remise de 5% sur votre tarif.&quot;);</span>
+                    } else {
+<span class="nc" id="L119">                        System.out.println(&quot;Merci pour votre visite !&quot;);</span>
+                    }
+                } else {
+<span class="nc" id="L122">                    System.out.println(&quot;Merci pour votre visite !&quot;);</span>
+                }
+<span class="nc" id="L124">                System.out.println(&quot;Le tarif à payer est : &quot; + finalTariff); // Afficher le tarif final</span>
+<span class="nc" id="L125">            }</span>
+             private double calculateTariff(String licensePlate, double normalTariff) {
+<span class="nc bnc" id="L127" title="All 4 branches missed.">                if (recurrentUsers.containsKey(licensePlate) &amp;&amp; recurrentUsers.get(licensePlate)) {</span>
+<span class="nc" id="L128">                    return normalTariff * RECURRENT_USER_DISCOUNT; // 5% remise pour les utilisateurs récurrents</span>
+                } else {
+<span class="nc" id="L130">                    return normalTariff; // Pas de remise pour les nouveaux utilisateurs</span>
+                }
+            }
+
+        }
+           
+             
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
