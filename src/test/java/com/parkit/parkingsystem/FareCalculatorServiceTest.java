@@ -6,19 +6,76 @@ import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.FareCalculatorService;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class FareCalculatorServiceTest {
 
-    private final FareCalculatorService fareCalculatorService = new FareCalculatorService();
+    private FareCalculatorService fareCalculatorService = new FareCalculatorService();
+    
+    
+        @Mock
+        private Ticket ticket;
+    
+        @Mock
+        private ParkingSpot parkingSpot;
+    
+          @BeforeEach
+        public void setUp() {
+            fareCalculatorService = new FareCalculatorService();
+
+    }
+
+     @Test
+    public void calculateFare_Car_RecurrentUser () {
+        LocalDateTime inTime = LocalDateTime.now(ZoneId.systemDefault()).minusHours(2);
+        LocalDateTime outTime = LocalDateTime.now(ZoneId.systemDefault());
+
+        when(ticket.getInTime()).thenReturn(inTime);
+        when(ticket.getOutTime()).thenReturn(outTime);
+        when(ticket.getParkingSpot()).thenReturn(parkingSpot);
+        when(parkingSpot.getParkingType()).thenReturn(ParkingType.CAR);
+        when(ticket.isRecurrent()).thenReturn(true);
+
+        // Act
+        double fare = fareCalculatorService.calculateFare(ticket);
+
+        // Assert
+        double expectedFare = 2 * Fare.CAR_RATE_PER_HOUR * FareCalculatorService.RECURRENT_USER_DISCOUNT;
+        assertEquals(expectedFare, fare, 0.01);
+    }
+
+    @Test
+    public void calculateFare_Bike_NonRecurrentUser() {
+        LocalDateTime inTime = LocalDateTime.now(ZoneId.systemDefault()).minusHours(1);
+        LocalDateTime outTime = LocalDateTime.now(ZoneId.systemDefault());
+
+        when(ticket.getInTime()).thenReturn(inTime);
+        when(ticket.getOutTime()).thenReturn(outTime);
+        when(ticket.getParkingSpot()).thenReturn(parkingSpot);
+        when(parkingSpot.getParkingType()).thenReturn(ParkingType.BIKE);
+        when(ticket.isRecurrent()).thenReturn(false);
+
+        double fare = fareCalculatorService.calculateFare(ticket);
+
+        double expectedFare = 1 * Fare.BIKE_RATE_PER_HOUR;
+        assertEquals(expectedFare, fare, 0.01);
+    }
 
     @Test
     void testCalculateFare_CarLessThan30Minutes() {
@@ -65,24 +122,24 @@ class FareCalculatorServiceTest {
             fareCalculatorService.calculateFare(null);
         });
     }
-    // @Test
-    // void testCalculateFare_NullInTime() {
-    //     Ticket ticket = new Ticket("ABC123", new ParkingSpot(1, ParkingType.CAR, false), 0);
-    //     ticket.setInTime(null);
-    //     ticket.setOutTime(LocalDateTime.now());
-    //     assertThrows(IllegalArgumentException.class, () -> {
-    //         fareCalculatorService.calculateFare(ticket);
-    //     });
-    //  }    
-    // @Test
-    // void testCalculateFare_NullOutTime() {
-    //     Ticket ticket = new Ticket("ABC123", new ParkingSpot(1, ParkingType.CAR, false), 0);
-    //     ticket.setInTime(LocalDateTime.now());
-    //     ticket.setOutTime(null);
-    //     assertThrows(IllegalArgumentException.class, () -> {
-    //         fareCalculatorService.calculateFare(ticket);
-    //         });
-    //     }
+    @Test
+    void testCalculateFare_NullInTime() {
+        Ticket ticket = new Ticket("ABC123", new ParkingSpot(1, ParkingType.CAR, false), 0);
+        ticket.setInTime(null);
+        ticket.setOutTime(LocalDateTime.now());
+        assertThrows(IllegalArgumentException.class, () -> {
+            fareCalculatorService.calculateFare(ticket);
+        });
+     }    
+    @Test
+    void testCalculateFare_NullOutTime() {
+        Ticket ticket = new Ticket("ABC123", new ParkingSpot(1, ParkingType.CAR, false), 0);
+        ticket.setInTime(LocalDateTime.now());
+        ticket.setOutTime(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            fareCalculatorService.calculateFare(ticket);
+            });
+        }
     @Test
     void testCalculateFare_InTimeAfterOutTime() {
         Ticket ticket = new Ticket("ABC123", new ParkingSpot(1, ParkingType.CAR, false), 0);
@@ -101,8 +158,51 @@ class FareCalculatorServiceTest {
             double fare = fareCalculatorService.calculateFare(ticket);
             assertEquals(0, fare);
         }
-      
+        @Test
+        public void testEnterGarage_RecurrentUser () {
+            String licensePlate = "ABC123";
+            when(ticket.getLicensePlate()).thenReturn(licensePlate);
+            fareCalculatorService.usersFromDatabase.put(licensePlate, true);
+        
+            fareCalculatorService.enterGarage(ticket.getLicensePlate());
+        
+            assertTrue(fareCalculatorService.getRecurrentUsers().containsKey(licensePlate));
+            assertTrue(fareCalculatorService.getRecurrentUsers().get(licensePlate));        
+        }
+        @Test
+        public void testExitGarage_RecurrentUser () {
+            String licensePlate = "ABC123";
+            fareCalculatorService.usersFromDatabase.put(licensePlate, true);
+            fareCalculatorService.recurrentUsers.put(licensePlate, true);
+            double normalTariff = 10.0;
 
+            fareCalculatorService.exitGarage(licensePlate, normalTariff);
+
+            assertTrue(fareCalculatorService.recurrentUsers.containsKey(licensePlate));
+            assertTrue(fareCalculatorService.recurrentUsers.get(licensePlate));
+        }
+        @Test
+        public void testCalculateTariff_RecurrentUser () {
+            String licensePlate = "ABC123";
+            fareCalculatorService.recurrentUsers.put(licensePlate, true);
+            double normalTariff = 10.0;
+
+            double finalTariff = fareCalculatorService.calculateTariff(licensePlate, normalTariff);
+
+            assertEquals(normalTariff * FareCalculatorService.RECURRENT_USER_DISCOUNT, finalTariff, 0.01);
+        }
+        @Test
+        public void testExitGarage_NewUser   () {
+            String licensePlate = "DEF456";
+            fareCalculatorService.recurrentUsers.put(licensePlate, false);
+            double normalTariff = 10.0;
+
+            fareCalculatorService.exitGarage(licensePlate, normalTariff);
+
+            assertTrue(fareCalculatorService.recurrentUsers.containsKey(licensePlate));
+            assertFalse(fareCalculatorService.recurrentUsers.get(licensePlate));
+        }
+                
 }
 
 

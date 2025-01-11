@@ -13,6 +13,11 @@ public class Ticket {
     private double price;
     private LocalDateTime inTime;
     private LocalDateTime outTime;
+    private boolean isRecurrent; 
+    private String licensePlate;
+    private String vehicleType;
+
+
 
     public Ticket(String vehicleRegNumber, ParkingSpot parkingSpot, double price) {
         this.vehicleRegNumber = vehicleRegNumber;
@@ -70,6 +75,20 @@ public class Ticket {
 
     public LocalDateTime getOutTime() {
         return outTime;
+    }
+    public boolean isRecurrent() {
+        return isRecurrent;
+    }
+
+    public void setRecurrent(boolean recurrent) {
+        isRecurrent = recurrent;
+    }
+    public String getLicensePlate() {
+        return licensePlate;
+    }
+
+    public void setLicensePlate(String licensePlate) {
+        this.licensePlate = licensePlate;
     }
 
 }

@@ -14,13 +14,19 @@ import java.util.Map;
 
         public class FareCalculatorService {
         
-            private Map<String, Boolean> recurrentUsers; 
-            private Map<String, Boolean> usersFromDatabase; 
-            private static final double RECURRENT_USER_DISCOUNT = 0.95; // 5% de remise
+            public Map<String, Boolean> recurrentUsers; 
+            public Map<String, Boolean> usersFromDatabase; 
+            public static final double RECURRENT_USER_DISCOUNT = 0.95; // 5% de remise
 
               public FareCalculatorService() {
                 this.recurrentUsers = new HashMap<>();
                 this.usersFromDatabase = new HashMap<>();
+            }
+            public boolean isRecurrentUser (String licensePlate) {
+                return recurrentUsers.containsKey(licensePlate) && recurrentUsers.get(licensePlate);
+            }
+            public Map<String, Boolean> getRecurrentUsers() {
+                return recurrentUsers;
             }
             public double calculateFare(Ticket ticket) {
                 if (ticket == null || ticket.getInTime() == null || ticket.getOutTime() == null) {
@@ -57,46 +63,13 @@ import java.util.Map;
                     System.out.println("Calculated fare: " + fare);
                     System.out.println("Rate per hour: " + ratePerHour);
                 }
-                if (isRecurrentUser (ticket.getVehicleRegNumber())) {
-                    fare *= RECURRENT_USER_DISCOUNT; 
+                if (ticket.isRecurrent()) {
+                    fare *= RECURRENT_USER_DISCOUNT;
                     System.out.println("Remise de 5% appliquée pour l'utilisateur récurrent.");
                 }
-                
                 ticket.setPrice(fare);
                 return fare; 
             }            
-   
-      
-                public boolean isRecurrentUser (String licensePlate) {
-                return recurrentUsers.containsKey(licensePlate) && recurrentUsers.get(licensePlate);
-                }
-
-
-            // public class RecurrentUser (double normalTariff) {
-            //     this.recurrentUsers = new HashMap<>();
-            //     this.normalTariff = normalTariff;
-            //     this.usersFromDatabase = new HashMap<>(); 
-        
-            // }
-            // public void loadRecurrentUsersFromDataBase() throws Exception {
-            //     Connection con = null;
-            //     try {
-            //         con = dataBaseConfig.getConnection();
-            //         PreparedStatement ps = con.prepareStatement(DBConstants.RECCURENT_USER);
-            //         ResultSet rs = ps.executeQuery();
-            //         while (rs.next()) {
-            //             String id = rs.getString("VEHICLE_REG_NUMBER");
-            //             this.usersFromDatabase.put(id, true);
-            //             }
-            //         } catch (SQLException e) {
-            //             e.printStackTrace(); 
-            //         } finally {
-            //             if (con != null) {
-            //                 con.close(); 
-            //             }
-            //         }
-           
-            // }
             public void enterGarage(String licensePlate) {
                 if (usersFromDatabase.containsKey(licensePlate)) {
                     System.out.println("Heureux de vous revoir ! En tant qu'utilisateur régulier de notre parking, vous allez obtenir une remise de 5%");
@@ -123,7 +96,7 @@ import java.util.Map;
                 }
                 System.out.println("Le tarif à payer est : " + finalTariff); // Afficher le tarif final
             }
-             private double calculateTariff(String licensePlate, double normalTariff) {
+             public double calculateTariff(String licensePlate, double normalTariff) {
                 if (recurrentUsers.containsKey(licensePlate) && recurrentUsers.get(licensePlate)) {
                     return normalTariff * RECURRENT_USER_DISCOUNT; // 5% remise pour les utilisateurs récurrents
                 } else {
