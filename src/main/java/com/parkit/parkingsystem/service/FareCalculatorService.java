@@ -10,17 +10,43 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
         public class FareCalculatorService {
-        
             public Map<String, Boolean> recurrentUsers; 
             public Map<String, Boolean> usersFromDatabase; 
             public static final double RECURRENT_USER_DISCOUNT = 0.95; // 5% de remise
 
+            // Requete ticket pour map les reccurent user 
+            // check BD licencePLate autre fois sinon recurrent user
+            // verifier map systemprintin 
+            // ne pas prendre outtime nul 
+
+            // va chercher plaque, si exist true 
+            // MAP OR BOOLEAN 
+
+
+
               public FareCalculatorService() {
                 this.recurrentUsers = new HashMap<>();
                 this.usersFromDatabase = new HashMap<>();
+            }
+
+            public void mapRecurrentUsers(List<Ticket> tickets) {
+                for (Ticket ticket : tickets) {
+                String licensePlate = ticket.getLicensePlate();
+                    if (usersFromDatabase.containsKey(licensePlate)) {
+                        if (ticket.getOutTime() != null) {
+                            recurrentUsers.put(licensePlate, true);
+                        } else {
+                            recurrentUsers.put(licensePlate, false);
+                        }
+                    } else {
+                        usersFromDatabase.put(licensePlate, false);
+                        recurrentUsers.put(licensePlate, false);
+                    }
+                }
             }
             public boolean isRecurrentUser (String licensePlate) {
                 return recurrentUsers.containsKey(licensePlate) && recurrentUsers.get(licensePlate);
@@ -63,7 +89,7 @@ import java.util.Map;
                     System.out.println("Calculated fare: " + fare);
                     System.out.println("Rate per hour: " + ratePerHour);
                 }
-                if (ticket.isRecurrent()) {
+                if (isRecurrentUser(ticket.getLicensePlate())) {
                     fare *= RECURRENT_USER_DISCOUNT;
                     System.out.println("Remise de 5% appliquée pour l'utilisateur récurrent.");
                 }
@@ -76,7 +102,8 @@ import java.util.Map;
                     recurrentUsers.put(licensePlate, true); // Marquer comme récurrent
                     System.out.println("User  marked as recurrent: " + licensePlate);
                 } else {
-                    recurrentUsers.put(licensePlate, false); // Premier passage
+                    usersFromDatabase.put(licensePlate, true); // Ajouter l'utilisateur à la base de données
+                    recurrentUsers.put(licensePlate, true); // Marquer comme récurrent
                     System.out.println("Bienvenue dans notre garage !");
                 }
             }
@@ -84,6 +111,7 @@ import java.util.Map;
            
         
             public void exitGarage(String licensePlate, double normalTariff) {
+                
                 double finalTariff = calculateTariff(licensePlate, normalTariff); // Calculer le tarif final
                 if (recurrentUsers.containsKey(licensePlate)) {
                     if (recurrentUsers.get(licensePlate)) {
@@ -96,12 +124,32 @@ import java.util.Map;
                 }
                 System.out.println("Le tarif à payer est : " + finalTariff); // Afficher le tarif final
             }
-             public double calculateTariff(String licensePlate, double normalTariff) {
-                if (recurrentUsers.containsKey(licensePlate) && recurrentUsers.get(licensePlate)) {
-                    return normalTariff * RECURRENT_USER_DISCOUNT; // 5% remise pour les utilisateurs récurrents
+
+            public double calculateTariff(String licensePlate, double normalTariff) {
+                
+                System.out.println("Vérification de l'existence de la licence plate : " + licensePlate);
+                if (recurrentUsers.containsKey(licensePlate)) {
+                    System.out.println("La licence plate " + licensePlate + " existe dans la base de données.");
+                    if (recurrentUsers.get(licensePlate)) {
+                        System.out.println("L'utilisateur est récurrent.");
+                        return normalTariff * RECURRENT_USER_DISCOUNT; // 5% remise pour les utilisateurs récurrents
+                    } else {
+                        System.out.println("L'utilisateur n'est pas récurrent.");
+                        return normalTariff; // Pas de remise pour les nouveaux utilisateurs
+                    }
                 } else {
+                    System.out.println("La licence plate " + licensePlate + " n'existe pas dans la base de données.");
                     return normalTariff; // Pas de remise pour les nouveaux utilisateurs
                 }
+            }
+            public static void main(String[] args) {
+                FareCalculatorService fareCalculatorService = new FareCalculatorService();
+                String licensePlate = "ABC123";
+                fareCalculatorService.enterGarage(licensePlate);
+                double normalTariff = 10.0;
+                fareCalculatorService.exitGarage(licensePlate, normalTariff);
+                fareCalculatorService.enterGarage(licensePlate);
+                fareCalculatorService.exitGarage(licensePlate, normalTariff);
             }
 
         }
