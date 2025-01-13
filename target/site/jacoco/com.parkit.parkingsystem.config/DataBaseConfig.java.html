@@ -13,7 +13,7 @@ import java.sql.*;
 <span class="nc" id="L13">        logger.info(&quot;Create DB connection&quot;);</span>
 <span class="nc" id="L14">        Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);</span>
 <span class="nc" id="L15">        return DriverManager.getConnection(</span>
-<span class="nc" id="L16">                &quot;jdbc:mysql://localhost:3306/prod?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC&quot;,&quot;root&quot;,&quot;2708&quot;);</span>
+                &quot;jdbc:mysql://localhost:3306/prod?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC&quot;,&quot;root&quot;,&quot;2708&quot;);
     }
 
 
@@ -24,7 +24,7 @@ import java.sql.*;
 <span class="nc" id="L24">                logger.info(&quot;Closing DB connection&quot;);</span>
 <span class="nc" id="L25">            } catch (SQLException e) {</span>
 <span class="nc" id="L26">                logger.error(&quot;Error while closing connection&quot;,e);</span>
-            }
+<span class="nc" id="L27">            }</span>
         }
 <span class="nc" id="L29">    }</span>
 
@@ -35,7 +35,7 @@ import java.sql.*;
 <span class="nc" id="L35">                logger.info(&quot;Closing Prepared Statement&quot;);</span>
 <span class="nc" id="L36">            } catch (SQLException e) {</span>
 <span class="nc" id="L37">                logger.error(&quot;Error while closing prepared statement&quot;,e);</span>
-            }
+<span class="nc" id="L38">            }</span>
         }
 <span class="nc" id="L40">    }</span>
 
@@ -46,7 +46,7 @@ import java.sql.*;
 <span class="nc" id="L46">                logger.info(&quot;Closing Result Set&quot;);</span>
 <span class="nc" id="L47">            } catch (SQLException e) {</span>
 <span class="nc" id="L48">                logger.error(&quot;Error while closing result set&quot;,e);</span>
-            }
+<span class="nc" id="L49">            }</span>
         }
 <span class="nc" id="L51">    }</span>
 }

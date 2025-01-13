@@ -60,7 +60,6 @@ public class ParkingServiceTest {
 
  @Test
 void testProcessExitingVehicle() throws Exception {
-    // Arrange
     when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABC123");
 
     Ticket ticket = new Ticket(null, null, 0);
@@ -71,24 +70,21 @@ void testProcessExitingVehicle() throws Exception {
     when(ticketDAO.getTicket("ABC123")).thenReturn(ticket);
     when(ticketDAO.updateTicket(ticket)).thenReturn(true);
 
-    // Act
     parkingService.processExitingVehicle();
 
-    // Assert
+    // 
     verify(ticketDAO, times(1)).getTicket("ABC123");
     verify(ticketDAO, times(1)).updateTicket(ticket);
     verify(parkingSpotDAO, times(1)).updateParking(any(ParkingSpot.class));
 }
 @Test
 void testGetNextParkingNumberIfAvailable() throws Exception {
-    // Arrange
+
     when(inputReaderUtil.readSelection()).thenReturn(1); // CAR
     when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
 
-    // Act
     ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
 
-    // Assert
     assertNotNull(parkingSpot);
     equals(1);
     }

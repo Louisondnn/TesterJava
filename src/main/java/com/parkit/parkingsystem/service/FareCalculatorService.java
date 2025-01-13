@@ -18,15 +18,6 @@ import java.util.Map;
             public Map<String, Boolean> usersFromDatabase; 
             public static final double RECURRENT_USER_DISCOUNT = 0.95; // 5% de remise
 
-            // Requete ticket pour map les reccurent user 
-            // check BD licencePLate autre fois sinon recurrent user
-            // verifier map systemprintin 
-            // ne pas prendre outtime nul 
-
-            // va chercher plaque, si exist true 
-            // MAP OR BOOLEAN 
-
-
 
               public FareCalculatorService() {
                 this.recurrentUsers = new HashMap<>();
@@ -79,8 +70,6 @@ import java.util.Map;
                         case BIKE:
                             ratePerHour = Fare.BIKE_RATE_PER_HOUR;
                             break;
-                        default:
-                            throw new IllegalArgumentException("Unknown parking type: " + ticket.getParkingSpot().getParkingType());
                     }
                     long hours = totalMinutes / 60;
                     long minutes = totalMinutes % 60;
@@ -142,15 +131,15 @@ import java.util.Map;
                     return normalTariff; // Pas de remise pour les nouveaux utilisateurs
                 }
             }
-            public static void main(String[] args) {
-                FareCalculatorService fareCalculatorService = new FareCalculatorService();
-                String licensePlate = "ABC123";
-                fareCalculatorService.enterGarage(licensePlate);
-                double normalTariff = 10.0;
-                fareCalculatorService.exitGarage(licensePlate, normalTariff);
-                fareCalculatorService.enterGarage(licensePlate);
-                fareCalculatorService.exitGarage(licensePlate, normalTariff);
-            }
+            // public static void main(String[] args) {
+            //     FareCalculatorService fareCalculatorService = new FareCalculatorService();
+            //     String licensePlate = "ABC123";
+            //     fareCalculatorService.enterGarage(licensePlate);
+            //     double normalTariff = 10.0;
+            //     fareCalculatorService.exitGarage(licensePlate, normalTariff);
+            //     fareCalculatorService.enterGarage(licensePlate);
+            //     fareCalculatorService.exitGarage(licensePlate, normalTariff);
+            // }
 
         }
            

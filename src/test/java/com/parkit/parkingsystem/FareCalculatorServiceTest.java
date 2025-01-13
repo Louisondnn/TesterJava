@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,14 +51,14 @@ class FareCalculatorServiceTest {
         when(ticket.getOutTime()).thenReturn(outTime);
         when(ticket.getParkingSpot()).thenReturn(parkingSpot);
         when(parkingSpot.getParkingType()).thenReturn(ParkingType.CAR);
-        when(ticket.isRecurrent()).thenReturn(true);
+        when(ticket.getLicensePlate()).thenReturn("recurrentLicensePlate");
+        fareCalculatorService.mapRecurrentUsers(Collections.singletonList(ticket));
 
-        // Act
         double fare = fareCalculatorService.calculateFare(ticket);
 
         // Assert
-        double expectedFare = 2 * Fare.CAR_RATE_PER_HOUR * FareCalculatorService.RECURRENT_USER_DISCOUNT;
-        assertEquals(expectedFare, fare, 0.01);
+        double expectedFare = 3.0;
+        assertEquals(expectedFare, fare, 0.001);
     }
 
     @Test
@@ -69,7 +70,9 @@ class FareCalculatorServiceTest {
         when(ticket.getOutTime()).thenReturn(outTime);
         when(ticket.getParkingSpot()).thenReturn(parkingSpot);
         when(parkingSpot.getParkingType()).thenReturn(ParkingType.BIKE);
-        when(ticket.isRecurrent()).thenReturn(false);
+        when(ticket.getLicensePlate()).thenReturn("nonRecurrentLicensePlate");
+
+        fareCalculatorService.mapRecurrentUsers(Collections.emptyList());
 
         double fare = fareCalculatorService.calculateFare(ticket);
 
@@ -170,6 +173,16 @@ class FareCalculatorServiceTest {
             assertTrue(fareCalculatorService.getRecurrentUsers().get(licensePlate));        
         }
         @Test
+        public void testEnterGarage_NewUser  () {
+            String licensePlate = "DEF456";            
+            fareCalculatorService.enterGarage(licensePlate);
+            
+            assertTrue(fareCalculatorService.getRecurrentUsers().containsKey(licensePlate));
+            assertTrue(fareCalculatorService.getRecurrentUsers().get(licensePlate));        
+            assertTrue(fareCalculatorService.usersFromDatabase.containsKey(licensePlate));
+        }
+            
+        @Test
         public void testExitGarage_RecurrentUser () {
             String licensePlate = "ABC123";
             fareCalculatorService.usersFromDatabase.put(licensePlate, true);
@@ -202,6 +215,30 @@ class FareCalculatorServiceTest {
             assertTrue(fareCalculatorService.recurrentUsers.containsKey(licensePlate));
             assertFalse(fareCalculatorService.recurrentUsers.get(licensePlate));
         }
+        @Test
+    public void mapRecurrentUsers_RecurrentUser () {
+        Ticket ticket = mock(Ticket.class);
+        when(ticket.getLicensePlate()).thenReturn("existentLicensePlate");
+        when(ticket.getOutTime()).thenReturn(LocalDateTime.now());
+
+        fareCalculatorService.usersFromDatabase.put("existentLicensePlate", true);
+        fareCalculatorService.mapRecurrentUsers(Collections.singletonList(ticket));
+
+        assertTrue(fareCalculatorService.recurrentUsers.get("existentLicensePlate"));
+}
+
+    @Test
+    public void mapRecurrentUsers_NoOutTime() {
+        Ticket ticket = mock(Ticket.class);
+        when(ticket.getLicensePlate()).thenReturn("existentLicensePlate");
+        when(ticket.getOutTime()).thenReturn(null);
+
+        fareCalculatorService.usersFromDatabase.put("existentLicensePlate", true);
+
+        fareCalculatorService.mapRecurrentUsers(Collections.singletonList(ticket));
+
+        assertFalse(fareCalculatorService.recurrentUsers.get("existentLicensePlate"));
+    }
                 
 }
 

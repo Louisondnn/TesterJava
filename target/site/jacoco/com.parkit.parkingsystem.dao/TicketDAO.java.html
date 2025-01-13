@@ -40,12 +40,12 @@ import java.sql.Timestamp;
 <span class="nc" id="L40">           ps.setTimestamp(4, Timestamp.valueOf(ticket.getInTime())); // Assurez-vous que getInTime() renvoie un LocalDateTime valide</span>
 <span class="nc" id="L41">           ps.setTimestamp(5, null); // ou une autre valeur si vous avez une date de sortie</span>
 <span class="nc" id="L42">           int affectedRows = ps.executeUpdate();</span>
-<span class="nc" id="L43">           return affectedRows &gt; 0; // Retourne true si l'insertion a réussi</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">           return affectedRows &gt; 0; // Retourne true si l'insertion a réussi</span>
 
             // return ps.execute();
 <span class="nc" id="L46">        }catch (Exception ex){</span>
 <span class="nc" id="L47">            logger.error(&quot;Error fetching next available slot&quot;,ex);</span>
-<span class="nc" id="L48">        }finally {</span>
+        }finally {
 <span class="nc" id="L49">            dataBaseConfig.closeConnection(con);</span>
 <span class="nc" id="L50">            return false;</span>
         }
@@ -75,7 +75,7 @@ import java.sql.Timestamp;
 <span class="nc" id="L75">            dataBaseConfig.closePreparedStatement(ps);</span>
 <span class="nc" id="L76">        }catch (Exception ex){</span>
 <span class="nc" id="L77">            logger.error(&quot;Error fetching next available slot&quot;,ex);</span>
-<span class="nc" id="L78">        }finally {</span>
+        }finally {
 <span class="nc" id="L79">            dataBaseConfig.closeConnection(con);</span>
 <span class="nc" id="L80">            return ticket;</span>
         }
@@ -94,7 +94,7 @@ import java.sql.Timestamp;
             // Vérifiez si outTime est null et convertissez-le en Timestamp
 <span class="nc bnc" id="L95" title="All 2 branches missed.">            if (ticket.getOutTime() != null) {</span>
 <span class="nc" id="L96">                ps.setTimestamp(2, Timestamp.valueOf(ticket.getOutTime())); // Conversion de LocalDateTime à Timestamp</span>
-<span class="nc" id="L97">            } else {</span>
+            } else {
 <span class="nc" id="L98">                ps.setNull(2, java.sql.Types.TIMESTAMP); // Si outTime est null, définir le champ comme NULL dans la base de données</span>
             }
     
@@ -112,14 +112,14 @@ import java.sql.Timestamp;
 <span class="nc" id="L112">                    ps.close();</span>
 <span class="nc" id="L113">                } catch (SQLException e) {</span>
 <span class="nc" id="L114">                    logger.error(&quot;Error closing PreparedStatement&quot;, e);</span>
-                }
+<span class="nc" id="L115">                }</span>
             }
 <span class="nc bnc" id="L117" title="All 2 branches missed.">            if (con != null) {</span>
                 try {
 <span class="nc" id="L119">                    con.close();</span>
 <span class="nc" id="L120">                } catch (SQLException e) {</span>
 <span class="nc" id="L121">                    logger.error(&quot;Error closing Connection&quot;, e);</span>
-                }
+<span class="nc" id="L122">                }</span>
             }
         }
         
