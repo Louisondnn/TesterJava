@@ -13,4 +13,5 @@ public class DBConstants {
     "ORDER BY t.IN_TIME DESC LIMIT 1";
 
 public static final String RECCURENT_USER = "select DISTINCT t.VEHICLE_REG_NUMBER from ticket t";
+
 }

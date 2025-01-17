@@ -81,6 +81,8 @@ import java.util.Map;
                 if (isRecurrentUser(ticket.getLicensePlate())) {
                     fare *= RECURRENT_USER_DISCOUNT;
                     System.out.println("Remise de 5% appliquée pour l'utilisateur récurrent.");
+                    System.out.println("Calculated fare: " + fare);
+
                 }
                 ticket.setPrice(fare);
                 return fare; 
@@ -131,15 +133,15 @@ import java.util.Map;
                     return normalTariff; // Pas de remise pour les nouveaux utilisateurs
                 }
             }
-            // public static void main(String[] args) {
-            //     FareCalculatorService fareCalculatorService = new FareCalculatorService();
-            //     String licensePlate = "ABC123";
-            //     fareCalculatorService.enterGarage(licensePlate);
-            //     double normalTariff = 10.0;
-            //     fareCalculatorService.exitGarage(licensePlate, normalTariff);
-            //     fareCalculatorService.enterGarage(licensePlate);
-            //     fareCalculatorService.exitGarage(licensePlate, normalTariff);
-            // }
+            public static void main(String[] args) {
+                FareCalculatorService fareCalculatorService = new FareCalculatorService();
+                String licensePlate = "ABC123";
+                fareCalculatorService.enterGarage(licensePlate);
+                double normalTariff = 10.0;
+                fareCalculatorService.exitGarage(licensePlate, normalTariff);
+                fareCalculatorService.enterGarage(licensePlate);
+                fareCalculatorService.exitGarage(licensePlate, normalTariff);
+            }
 
         }
            
