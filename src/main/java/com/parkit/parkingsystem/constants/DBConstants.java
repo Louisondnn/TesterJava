@@ -12,6 +12,8 @@ public class DBConstants {
     "WHERE p.parking_number = t.parking_number AND t.VEHICLE_REG_NUMBER = ? " +
     "ORDER BY t.IN_TIME DESC LIMIT 1";
 
-public static final String RECCURENT_USER = "select DISTINCT t.VEHICLE_REG_NUMBER from ticket t";
+// public static final String RECCURENT_USER = "select DISTINCT t.VEHICLE_REG_NUMBER from ticket t";
+    public static final String COUNT_TICKETS = "select COUNT(t.VEHICLE_REG_NUMBER) from ticket t where t.VEHICLE_REG_NUMBER=?";
+
 
 }

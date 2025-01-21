@@ -36,11 +36,9 @@ public class TicketDAO {
             ps.setInt(1,ticket.getParkingSpot().getId());
             ps.setString(2, ticket.getVehicleRegNumber());
             ps.setDouble(3, ticket.getPrice());
-           // Utilisez setTimestamp à la place de setInTime
-           ps.setTimestamp(4, Timestamp.valueOf(ticket.getInTime())); // Assurez-vous que getInTime() renvoie un LocalDateTime valide
-           ps.setTimestamp(5, null); // ou une autre valeur si vous avez une date de sortie
-           int affectedRows = ps.executeUpdate();
-           return affectedRows > 0; // Retourne true si l'insertion a réussi
+           ps.setTimestamp(4, new Timestamp(ticket.getInTime().getTime()));
+           ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (new Timestamp(ticket.getOutTime().getTime())));
+           return ps.execute();
 
             // return ps.execute();
         }catch (Exception ex){
@@ -83,50 +81,44 @@ public class TicketDAO {
 
     public boolean updateTicket(Ticket ticket) {
         Connection con = null;
-        PreparedStatement ps = null;
-        boolean isUpdated = false; // Variable pour suivre l'état de la mise à jour
-    
         try {
             con = dataBaseConfig.getConnection();
-            ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
+            PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
             ps.setDouble(1, ticket.getPrice());
-    
-            // Vérifiez si outTime est null et convertissez-le en Timestamp
-            if (ticket.getOutTime() != null) {
-                ps.setTimestamp(2, Timestamp.valueOf(ticket.getOutTime())); // Conversion de LocalDateTime à Timestamp
-            } else {
-                ps.setNull(2, java.sql.Types.TIMESTAMP); // Si outTime est null, définir le champ comme NULL dans la base de données
-            }
-    
+            ps.setTimestamp(2, new Timestamp(ticket.getOutTime().getTime()));
             ps.setInt(3, ticket.getId());
-    
-            // Utilisez executeUpdate pour les mises à jour
-            int rowsAffected = ps.executeUpdate();
-            isUpdated = (rowsAffected > 0); // Vérifiez si la mise à jour a réussi
+            ps.execute();
+            return true;
         } catch (Exception ex) {
-            logger.error("Error updating ticket", ex);
+            logger.error("Error saving ticket info", ex);
         } finally {
-            // Fermez les ressources dans l'ordre inverse de leur ouverture
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    logger.error("Error closing PreparedStatement", e);
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                    logger.error("Error closing Connection", e);
-                }
-            }
+            dataBaseConfig.closeConnection(con);
         }
-        
-        return isUpdated; // Retournez true si la mise à jour a réussi, sinon false
+        return false;
     }
-    public void deleteTicket(String string) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteTicket'");
+    
+    public int getNbTicket(String regVehicleNumber) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int result = 0;
+
+        try {
+            con = dataBaseConfig.getConnection();
+            ps = con.prepareStatement(DBConstants.COUNT_TICKETS);
+            ps.setString(1, regVehicleNumber);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt(1);
+            }
+
+        } catch (Exception ex) {
+            logger.error("", ex);
+        } finally {
+            dataBaseConfig.closePreparedStatement(ps);
+            dataBaseConfig.closeResultSet(rs);
+            dataBaseConfig.closeConnection(con);
+        }
+        return result;
     }
 }
