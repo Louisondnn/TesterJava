@@ -14,8 +14,8 @@ public class Ticket {
     private boolean isRecurrent;
     private String licensePlate;
     private String vehicleType;
-    private Date inTime;
-    private Date outTime;
+    private LocalDateTime inTime;
+    private LocalDateTime outTime;
 
 
     public Ticket(String vehicleRegNumber, ParkingSpot parkingSpot, double price) {
@@ -61,18 +61,6 @@ public class Ticket {
         this.price = price;
     }
 
-    public Date getInTime() {
-        return inTime;
-    }
-
-    public Date getOutTime() {
-        return outTime;
-    }
-
-    public void setOutTime(Date outTime) {
-        this.outTime = outTime;
-    }
-
     public boolean isRecurrent() {
         return isRecurrent;
     }
@@ -87,20 +75,27 @@ public class Ticket {
 
     public void setLicensePlate(String licensePlate) {
         this.licensePlate = licensePlate;
-    }
+}
 
-    public void setInTime(LocalDateTime localDateTime) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setInTime'");
-    }
+public LocalDateTime getInTime() {
+    return inTime;
+}
 
-    public void setOutTime(Object outTime2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setOutTime'");
-    }
+public void setInTime(LocalDateTime inTime) {
+    this.inTime = inTime;
+}
 
-    public void setInTime(java.util.Date inTime2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setInTime'");
-    }
+public LocalDateTime getOutTime() {
+    return outTime;
+}
+
+public void setInTime(java.util.Date inTime2) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setInTime'");
+}
+
+public void setOutTime(java.util.Date outTime2) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setOutTime'");
+}
 }

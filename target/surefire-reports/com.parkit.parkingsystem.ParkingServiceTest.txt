@@ -1,4 +1,20 @@
 -------------------------------------------------------------------------------
 Test set: com.parkit.parkingsystem.ParkingServiceTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.261 s - in com.parkit.parkingsystem.ParkingServiceTest
+Tests run: 3, Failures: 1, Errors: 1, Skipped: 0, Time elapsed: 0.596 s <<< FAILURE! - in com.parkit.parkingsystem.ParkingServiceTest
+testProcessExitingVehicle  Time elapsed: 0.559 s  <<< ERROR!
+java.lang.UnsupportedOperationException: Unimplemented method 'setInTime'
+	at com.parkit.parkingsystem.ParkingServiceTest.testProcessExitingVehicle(ParkingServiceTest.java:67)
+
+testProcessIncomingVehicle  Time elapsed: 0.024 s  <<< FAILURE!
+org.mockito.exceptions.verification.WantedButNotInvoked: 
+
+Wanted but not invoked:
+ticketDAO.saveTicket(
+    <any com.parkit.parkingsystem.model.Ticket>
+);
+-> at com.parkit.parkingsystem.ParkingServiceTest.testProcessIncomingVehicle(ParkingServiceTest.java:56)
+Actually, there were zero interactions with this mock.
+
+	at com.parkit.parkingsystem.ParkingServiceTest.testProcessIncomingVehicle(ParkingServiceTest.java:56)
+
