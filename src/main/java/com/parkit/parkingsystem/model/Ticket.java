@@ -1,32 +1,23 @@
 package com.parkit.parkingsystem.model;
 
-import com.parkit.parkingsystem.constants.ParkingType;
+import java.util.Calendar;
+import java.util.Date;
 
-import java.sql.Date;
-import java.time.LocalDateTime;
+import com.parkit.parkingsystem.config.DataBaseConfig;
+import com.parkit.parkingsystem.dao.TicketDAO;
 
 public class Ticket {
+
     private int id;
-    private ParkingType parkingType;
     private ParkingSpot parkingSpot;
     private String vehicleRegNumber;
     private double price;
-    private boolean isRecurrent;
-    private String licensePlate;
-    private String vehicleType;
-    private LocalDateTime inTime;
-    private LocalDateTime outTime;
+    private Date inTime;
+    private Date outTime;
 
 
-    public Ticket(String vehicleRegNumber, ParkingSpot parkingSpot, double price) {
-        this.vehicleRegNumber = vehicleRegNumber;
-        this.parkingSpot = parkingSpot;
-        this.parkingType = ParkingType.DEFAULT;
-        this.price = price;
-    }
-
-    public ParkingType getParkingType() {
-        return parkingType;
+    public Ticket(String vehicleRegNumber2, Object object, int i) {
+        //TODO Auto-generated constructor stub
     }
 
     public int getId() {
@@ -61,41 +52,19 @@ public class Ticket {
         this.price = price;
     }
 
-    public boolean isRecurrent() {
-        return isRecurrent;
+    public Date getInTime() {
+        return inTime;
     }
 
-    public void setRecurrent(boolean recurrent) {
-        isRecurrent = recurrent;
+    public void setInTime(Date inTime) {
+        this.inTime = inTime;
     }
 
-    public String getLicensePlate() {
-        return licensePlate;
+    public Date getOutTime() {
+        return outTime;
     }
 
-    public void setLicensePlate(String licensePlate) {
-        this.licensePlate = licensePlate;
-}
-
-public LocalDateTime getInTime() {
-    return inTime;
-}
-
-public void setInTime(LocalDateTime inTime) {
-    this.inTime = inTime;
-}
-
-public LocalDateTime getOutTime() {
-    return outTime;
-}
-
-public void setInTime(java.util.Date inTime2) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setInTime'");
-}
-
-public void setOutTime(java.util.Date outTime2) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setOutTime'");
-}
+    public void setOutTime(Date outTime) {
+        this.outTime = outTime;
+    }
 }

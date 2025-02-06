@@ -59,10 +59,10 @@ public class ParkingService {
         return inputReaderUtil.readVehicleRegistrationNumber();
     }
 
-    public ParkingSpot getNextParkingNumberIfAvailable(){
+    public ParkingSpot getNextParkingNumberIfAvailable() throws Exception{
         int parkingNumber=0;
         ParkingSpot parkingSpot = null;
-        try{
+      
             ParkingType parkingType = getVehichleType();
             parkingNumber = parkingSpotDAO.getNextAvailableSlot(parkingType);
             if(parkingNumber > 0){
@@ -70,11 +70,7 @@ public class ParkingService {
             }else{
                 throw new Exception("Error fetching parking number from DB. Parking slots might be full");
             }
-        }catch(IllegalArgumentException ie){
-            logger.error("Error parsing user input for type of vehicle", ie);
-        }catch(Exception e){
-            logger.error("Error fetching next available parking slot", e);
-        }
+   
         return parkingSpot;
     }
 
@@ -97,14 +93,14 @@ public class ParkingService {
         }
     }
 
-    @SuppressWarnings("static-access")
     public void processExitingVehicle() {
         try{
             String vehicleRegNumber = getVehichleRegNumber();
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
+            boolean isDiscount = ticketDAO.isRecurrent(vehicleRegNumber);
             Date outTime = new Date();
             ticket.setOutTime(outTime);
-            fareCalculatorService.calculateFare(ticket, false);
+            fareCalculatorService.calculateFare(ticket, isDiscount);
             if(ticketDAO.updateTicket(ticket)) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);
@@ -116,6 +112,7 @@ public class ParkingService {
             }
         }catch(Exception e){
             logger.error("Unable to process exiting vehicle",e);
-        }
+
+            }
     }
 }
