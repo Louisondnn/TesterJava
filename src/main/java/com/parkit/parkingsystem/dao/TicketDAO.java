@@ -20,29 +20,22 @@ public class TicketDAO {
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
     @SuppressWarnings("finally")
-    public boolean saveTicket(Ticket ticket){
+    public boolean saveTicket(Ticket ticket) {
         Connection con = null;
         try {
             con = dataBaseConfig.getConnection();
             PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);
             //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
             //ps.setInt(1,ticket.getId());
-            System.out.println("Saving ticket with inTime: " + ticket.getInTime() + " and outTime: " + ticket.getOutTime());
-            System.out.println("Parking Spot ID: " + ticket.getParkingSpot().getId());
-            System.out.println("Vehicle Registration Number: " + ticket.getVehicleRegNumber());
-            System.out.println("Price: " + ticket.getPrice());
-    
-            ps.setInt(1,ticket.getParkingSpot().getId());
+            ps.setInt(1, ticket.getParkingSpot().getId());
             ps.setString(2, ticket.getVehicleRegNumber());
             ps.setDouble(3, ticket.getPrice());
             ps.setTimestamp(4, new Timestamp(ticket.getInTime().getTime()));
-            ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (new Timestamp(ticket.getOutTime().getTime())), null);
-           return ps.execute();
-
-            // return ps.execute();
-        }catch (Exception ex){
-            logger.error("Error fetching next available slot",ex);
-        }finally {
+            ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (new Timestamp(ticket.getOutTime().getTime())));
+            return ps.execute();
+        } catch (Exception ex) {
+            logger.error("Error fetching next available slot", ex);
+        } finally {
             dataBaseConfig.closeConnection(con);
             return false;
         }
@@ -71,8 +64,10 @@ public class TicketDAO {
             dataBaseConfig.closePreparedStatement(ps);
         } catch (Exception ex) {
             logger.error("Error fetching next available slot", ex);
-        } 
-        return ticket;
+        } finally {
+            dataBaseConfig.closeConnection(con);
+            return ticket;
+        }
     }
 
     public boolean updateTicket(Ticket ticket) {
@@ -92,52 +87,29 @@ public class TicketDAO {
         }
         return false;
     }
-    
-    // public int getNbTicket(String regVehicleNumber) {
-    //     Connection con = null;
-    //     PreparedStatement ps = null;
-    //     ResultSet rs = null;
-    //     int result = 0;
 
-    //     try {
-    //         con = dataBaseConfig.getConnection();
-    //         ps = con.prepareStatement(DBConstants.COUNT_TICKETS);
-    //         ps.setString(1, regVehicleNumber);
-    //         rs = ps.executeQuery();
-    //         if (rs.next()) {
-    //             result = rs.getInt(1);
-    //         }
-
-    //     } catch (Exception ex) {
-    //         logger.error("", ex);
-    //     } finally {
-    //         dataBaseConfig.closePreparedStatement(ps);
-    //         dataBaseConfig.closeResultSet(rs);
-    //         dataBaseConfig.closeConnection(con);
-    //     }
-    //     return result;
-    // }
-
-    public boolean isRecurrent(String regVehicleNumber){
+    public int getNbTicket(String regVehicleNumber) {
         Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int result = 0;
+
         try {
-            int result = 0;
             con = dataBaseConfig.getConnection();
-            PreparedStatement ps = con.prepareStatement(DBConstants.COUNT_TICKETS);
+            ps = con.prepareStatement(DBConstants.COUNT_TICKETS);
             ps.setString(1, regVehicleNumber);
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            rs = ps.executeQuery();
+            if (rs.next()) {
                 result = rs.getInt(1);
             }
+
+        } catch (Exception ex) {
+            logger.error("", ex);
+        } finally {
             dataBaseConfig.closePreparedStatement(ps);
-            return (result >= 1);
-        }catch (Exception ex){
-            logger.error("",ex);
-            return false;
-        }finally {
+            dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closeConnection(con);
         }
-
+        return result;
     }
 }
-

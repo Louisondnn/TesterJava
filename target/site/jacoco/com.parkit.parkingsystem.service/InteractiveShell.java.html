@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 <span class="nc" id="L11">    private static final Logger logger = LogManager.getLogger(&quot;InteractiveShell&quot;);</span>
 
-    public static void loadInterface(){
+    public static void loadInterface() throws Exception{
 <span class="nc" id="L14">        logger.info(&quot;App initialized!!!&quot;);</span>
 <span class="nc" id="L15">        System.out.println(&quot;Welcome to Parking System!&quot;);</span>
 
@@ -39,7 +39,7 @@ import org.apache.logging.log4j.Logger;
                 }
 <span class="nc" id="L40">                default: System.out.println(&quot;Unsupported option. Please enter a number corresponding to the provided menu&quot;);</span>
             }
-<span class="nc" id="L42">        }</span>
+        }
 <span class="nc" id="L43">    }</span>
 
     private static void loadMenu(){

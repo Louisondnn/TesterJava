@@ -42,7 +42,7 @@ import java.sql.Timestamp;
             // return ps.execute();
 <span class="nc" id="L43">        }catch (Exception ex){</span>
 <span class="nc" id="L44">            logger.error(&quot;Error fetching next available slot&quot;,ex);</span>
-        }finally {
+<span class="nc" id="L45">        }finally {</span>
 <span class="nc" id="L46">            dataBaseConfig.closeConnection(con);</span>
 <span class="nc" id="L47">            return false;</span>
         }
@@ -71,7 +71,7 @@ import java.sql.Timestamp;
 <span class="nc" id="L71">            dataBaseConfig.closePreparedStatement(ps);</span>
 <span class="nc" id="L72">        } catch (Exception ex) {</span>
 <span class="nc" id="L73">            logger.error(&quot;Error fetching next available slot&quot;, ex);</span>
-<span class="nc" id="L74">        } </span>
+        } 
 <span class="nc" id="L75">        return ticket;</span>
     }
 
@@ -93,52 +93,53 @@ import java.sql.Timestamp;
 <span class="nc" id="L93">        return false;</span>
     }
     
-    // public int getNbTicket(String regVehicleNumber) {
-    //     Connection con = null;
-    //     PreparedStatement ps = null;
-    //     ResultSet rs = null;
-    //     int result = 0;
+    public int getNbTicket(String regVehicleNumber) {
+<span class="nc" id="L97">        Connection con = null;</span>
+<span class="nc" id="L98">        PreparedStatement ps = null;</span>
+<span class="nc" id="L99">        ResultSet rs = null;</span>
+<span class="nc" id="L100">        int result = 0;</span>
 
+        try {
+<span class="nc" id="L103">            con = dataBaseConfig.getConnection();</span>
+<span class="nc" id="L104">            ps = con.prepareStatement(DBConstants.COUNT_TICKETS);</span>
+<span class="nc" id="L105">            ps.setString(1, regVehicleNumber);</span>
+<span class="nc" id="L106">            rs = ps.executeQuery();</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L108">                result = rs.getInt(1);</span>
+                
+            }
+
+<span class="nc" id="L112">        } catch (Exception ex) {</span>
+<span class="nc" id="L113">            logger.error(&quot;&quot;, ex);</span>
+        } finally {
+<span class="nc" id="L115">            dataBaseConfig.closePreparedStatement(ps);</span>
+<span class="nc" id="L116">            dataBaseConfig.closeResultSet(rs);</span>
+<span class="nc" id="L117">            dataBaseConfig.closeConnection(con);</span>
+        }
+<span class="nc" id="L119">        return result;</span>
+    }
+
+    // public int isRecurrent(String regVehicleNumber){
+    //     Connection con = null;
     //     try {
+    //         int result = 0;
     //         con = dataBaseConfig.getConnection();
-    //         ps = con.prepareStatement(DBConstants.COUNT_TICKETS);
+    //         PreparedStatement ps = con.prepareStatement(DBConstants.COUNT_TICKETS);
     //         ps.setString(1, regVehicleNumber);
-    //         rs = ps.executeQuery();
-    //         if (rs.next()) {
+    //         ResultSet rs = ps.executeQuery();
+    //         if(rs.next()){
     //             result = rs.getInt(1);
     //         }
-
-    //     } catch (Exception ex) {
-    //         logger.error(&quot;&quot;, ex);
-    //     } finally {
     //         dataBaseConfig.closePreparedStatement(ps);
-    //         dataBaseConfig.closeResultSet(rs);
+    //         return (result &gt;= 1);
+    //     }catch (Exception ex){
+    //         logger.error(&quot;&quot;,ex);
+    //         return false;
+    //     }finally {
     //         dataBaseConfig.closeConnection(con);
     //     }
-    //     return result;
+
     // }
-
-    public boolean isRecurrent(String regVehicleNumber){
-<span class="nc" id="L122">        Connection con = null;</span>
-        try {
-<span class="nc" id="L124">            int result = 0;</span>
-<span class="nc" id="L125">            con = dataBaseConfig.getConnection();</span>
-<span class="nc" id="L126">            PreparedStatement ps = con.prepareStatement(DBConstants.COUNT_TICKETS);</span>
-<span class="nc" id="L127">            ps.setString(1, regVehicleNumber);</span>
-<span class="nc" id="L128">            ResultSet rs = ps.executeQuery();</span>
-<span class="nc bnc" id="L129" title="All 2 branches missed.">            if(rs.next()){</span>
-<span class="nc" id="L130">                result = rs.getInt(1);</span>
-            }
-<span class="nc" id="L132">            dataBaseConfig.closePreparedStatement(ps);</span>
-<span class="nc bnc" id="L133" title="All 2 branches missed.">            return (result &gt;= 1);</span>
-<span class="nc" id="L134">        }catch (Exception ex){</span>
-<span class="nc" id="L135">            logger.error(&quot;&quot;,ex);</span>
-<span class="nc" id="L136">            return false;</span>
-        }finally {
-<span class="nc" id="L138">            dataBaseConfig.closeConnection(con);</span>
-        }
-
-    }
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

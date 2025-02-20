@@ -7,7 +7,6 @@ import java.time.ZoneId;
 import java.sql.Date;
 import java.time.Duration;
 import static com.parkit.parkingsystem.constants.Fare.*;
-import java.time.temporal.ChronoUnit;
 
 public class FareCalculatorService {
 
@@ -16,7 +15,7 @@ public class FareCalculatorService {
             return date.toInstant(null).atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
         public static void calculateFare(Ticket ticket, boolean discount) {
-            if (ticket.getOutTime() == null || ticket.getInTime() == null || ticket.getOutTime().before(ticket.getInTime())) {
+            if (ticket.getOutTime() == null) {
                 throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime());
             }
     

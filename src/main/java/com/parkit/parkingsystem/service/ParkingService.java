@@ -26,6 +26,7 @@ public class ParkingService {
         this.parkingSpotDAO = parkingSpotDAO;
         this.ticketDAO = ticketDAO;
     }
+    
 
     public void processIncomingVehicle() {
         try{
@@ -73,7 +74,7 @@ public class ParkingService {
    
         return parkingSpot;
     }
-
+    // recup type 
     private ParkingType getVehichleType(){
         System.out.println("Please select vehicle type from menu");
         System.out.println("1 CAR");
@@ -83,6 +84,7 @@ public class ParkingService {
             case 1: {
                 return ParkingType.CAR;
             }
+        
             case 2: {
                 return ParkingType.BIKE;
             }
@@ -97,8 +99,10 @@ public class ParkingService {
         try{
             String vehicleRegNumber = getVehichleRegNumber();
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
-            boolean isDiscount = ticketDAO.isRecurrent(vehicleRegNumber);
+            // boolean isDiscount = ticketDAO.isRecurrent(vehicleRegNumber);
             Date outTime = new Date();
+            int nbTickets = ticketDAO.getNbTicket(vehicleRegNumber);
+            boolean isDiscount = (nbTickets > 1);
             ticket.setOutTime(outTime);
             fareCalculatorService.calculateFare(ticket, isDiscount);
             if(ticketDAO.updateTicket(ticket)) {

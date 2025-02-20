@@ -75,5 +75,9 @@ public class ParkingSpotDAO {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'isSpotAvailable'");
     }
+    public Object findAvailableParkingSpot() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAvailableParkingSpot'");
+    }
 
 }
