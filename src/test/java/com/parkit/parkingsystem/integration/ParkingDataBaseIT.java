@@ -41,7 +41,6 @@ public class ParkingDataBaseIT {
 
     @BeforeAll
     private static void setUp() throws Exception {
-        // The DAOs should be mocked, no need to initialize them manually.
         dataBasePrepareService = new DataBasePrepareService();
     }
 
@@ -59,33 +58,29 @@ public class ParkingDataBaseIT {
 
     @Test
     public void testParkingACar() throws Exception {
-        // Arrange
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABC123");
         when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
         when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
         when(ticketDAO.saveTicket(any(Ticket.class))).thenReturn(true);
 
-        // Act
+
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         parkingService.processIncomingVehicle();
 
-        // Assert
         verify(ticketDAO, times(1)).saveTicket(any(Ticket.class));
         verify(parkingSpotDAO, times(1)).updateParking(any(ParkingSpot.class));
     }
 
     @Test
     public void testParkingLotExit() throws Exception {
-        // Arrange
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABC123");
         when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
       when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
 
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-        parkingService.processIncomingVehicle();  // This method calls processIncomingVehicle which saves a ticket and updates parking
+        parkingService.processIncomingVehicle();  
         parkingService.processExitingVehicle();
     
-        // Assert
         verify(parkingSpotDAO, times(1)).updateParking(any(ParkingSpot.class));
     }
 }

@@ -111,6 +111,9 @@ public class ParkingService {
                 parkingSpotDAO.updateParking(parkingSpot);
                 System.out.println("Please pay the parking fare:" + ticket.getPrice());
                 System.out.println("Recorded out-time for vehicle number:" + ticket.getVehicleRegNumber() + " is:" + outTime);
+                if (isDiscount) {
+                    System.out.println("Heureux de vous revoir !");
+                }
             }else{
                 System.out.println("Unable to update ticket information. Error occurred");
             }
