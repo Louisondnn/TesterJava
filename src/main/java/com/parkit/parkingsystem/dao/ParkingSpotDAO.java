@@ -61,7 +61,7 @@ public class ParkingSpotDAO {
         }
     }
 
-    public void freeParkingSpot(int i) {
+    public ParkingSpot freeParkingSpot(int i) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'freeParkingSpot'");
     }
@@ -79,5 +79,33 @@ public class ParkingSpotDAO {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findAvailableParkingSpot'");
     }
+    public ParkingSpot getParkingSpot(int parkingNumber) {
+        ParkingSpot parkingSpot = null;
+        Connection con = null;
+    
+        try {
+            con = dataBaseConfig.getConnection();
+            PreparedStatement ps = con.prepareStatement(DBConstants.GET_PARKING_SPOT_BY_NUMBER);
+            ps.setInt(1, parkingNumber); // Set the parking spot number as the parameter
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                int id = rs.getInt("PARKING_NUMBER");
+                ParkingType type = ParkingType.valueOf(rs.getString("TYPE")); // Assuming TYPE column is a string representation of ParkingType
+                boolean available = rs.getBoolean("AVAILABLE");
+                parkingSpot = new ParkingSpot(id, type, available); // Create ParkingSpot object based on DB data
+            }
+    
+            dataBaseConfig.closeResultSet(rs);
+            dataBaseConfig.closePreparedStatement(ps);
+        } catch (Exception e) {
+            logger.error("Error fetching parking spot", e);
+        } finally {
+            dataBaseConfig.closeConnection(con);
+        }
+        
+        return parkingSpot;
+    }
+    
 
 }

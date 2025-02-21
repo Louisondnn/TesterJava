@@ -11,4 +11,3 @@ com/parkit/parkingsystem/constants/DBConstants.class
 com/parkit/parkingsystem/dao/TicketDAO.class
 com/parkit/parkingsystem/constants/Fare.class
 com/parkit/parkingsystem/App.class
-com/parkit/parkingsystem/service/FareCalculatorService$1.class

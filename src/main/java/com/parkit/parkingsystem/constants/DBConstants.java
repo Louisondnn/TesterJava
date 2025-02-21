@@ -14,6 +14,7 @@ public class DBConstants {
 
 // public static final String RECCURENT_USER = "select DISTINCT t.VEHICLE_REG_NUMBER from ticket t";
     public static final String COUNT_TICKETS = "select COUNT(t.VEHICLE_REG_NUMBER) from ticket t where t.VEHICLE_REG_NUMBER=?";
+    public static final String GET_PARKING_SPOT_BY_NUMBER = "SELECT PARKING_NUMBER, TYPE, AVAILABLE FROM parking WHERE PARKING_NUMBER = ?";
 
 
 }

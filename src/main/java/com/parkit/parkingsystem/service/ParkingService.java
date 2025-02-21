@@ -50,6 +50,11 @@ public class ParkingService {
                 System.out.println("Please park your vehicle in spot number:"+parkingSpot.getId());
                 System.out.println("Recorded in-time for vehicle number:"+vehicleRegNumber+" is:"+inTime);
             }
+            int nbTickets = ticketDAO.getNbTicket(getVehichleRegNumber());
+            boolean isDiscount = (nbTickets > 0);
+            if (isDiscount) {
+                System.out.println("Heureux de vous revoir !");
+            }
         }catch(Exception e){
             logger.error("Unable to process incoming vehicle",e);
         }
@@ -100,6 +105,7 @@ public class ParkingService {
             String vehicleRegNumber = getVehichleRegNumber();
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
             // boolean isDiscount = ticketDAO.isRecurrent(vehicleRegNumber);
+            
             Date outTime = new Date();
             int nbTickets = ticketDAO.getNbTicket(vehicleRegNumber);
             boolean isDiscount = (nbTickets > 1);
@@ -111,9 +117,7 @@ public class ParkingService {
                 parkingSpotDAO.updateParking(parkingSpot);
                 System.out.println("Please pay the parking fare:" + ticket.getPrice());
                 System.out.println("Recorded out-time for vehicle number:" + ticket.getVehicleRegNumber() + " is:" + outTime);
-                if (isDiscount) {
-                    System.out.println("Heureux de vous revoir !");
-                }
+         
             }else{
                 System.out.println("Unable to update ticket information. Error occurred");
             }

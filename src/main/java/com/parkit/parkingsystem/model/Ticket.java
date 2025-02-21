@@ -20,6 +20,10 @@ public class Ticket {
         //TODO Auto-generated constructor stub
     }
 
+    public Ticket(String string, ParkingSpot parkingSpot2, Object object, double d) {
+        //TODO Auto-generated constructor stub
+    }
+
     public int getId() {
         return id;
     }
@@ -66,5 +70,10 @@ public class Ticket {
 
     public void setOutTime(Date outTime) {
         this.outTime = outTime;
+    }
+
+    public Object getParkingType() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getParkingType'");
     }
 }

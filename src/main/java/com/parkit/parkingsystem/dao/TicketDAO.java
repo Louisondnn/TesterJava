@@ -50,6 +50,7 @@ public class TicketDAO {
             //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
             ps.setString(1, vehicleRegNumber);
             ResultSet rs = ps.executeQuery();
+            System.out.println(rs);
             if (rs.next()) {
                 ticket = new Ticket(vehicleRegNumber, rs, 0);
                 ParkingSpot parkingSpot = new ParkingSpot(rs.getInt(1), ParkingType.valueOf(rs.getString(6)), false);
@@ -59,7 +60,10 @@ public class TicketDAO {
                 ticket.setPrice(rs.getDouble(3));
                 ticket.setInTime(rs.getTimestamp(4));
                 ticket.setOutTime(rs.getTimestamp(5));
+                System.out.println("PSpot" + parkingSpot);
+
             }
+
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
         } catch (Exception ex) {
@@ -111,5 +115,10 @@ public class TicketDAO {
             dataBaseConfig.closeConnection(con);
         }
         return result;
+    }
+
+    public void updateTicketPrice(Ticket ticket) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateTicketPrice'");
     }
 }

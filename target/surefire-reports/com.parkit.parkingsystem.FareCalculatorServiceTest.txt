@@ -1,4 +1,16 @@
 -------------------------------------------------------------------------------
 Test set: com.parkit.parkingsystem.FareCalculatorServiceTest
 -------------------------------------------------------------------------------
-Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.054 s - in com.parkit.parkingsystem.FareCalculatorServiceTest
+Tests run: 13, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 0.007 s <<< FAILURE! - in com.parkit.parkingsystem.FareCalculatorServiceTest
+calculateFareBikeWithDiscount  Time elapsed: 0 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <0.95> but was: <0.050000000000000044>
+	at com.parkit.parkingsystem.FareCalculatorServiceTest.calculateFareBikeWithDiscount(FareCalculatorServiceTest.java:204)
+
+calculateFareCarWithDiscount  Time elapsed: 0 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <1.4249999999999998> but was: <0.07500000000000007>
+	at com.parkit.parkingsystem.FareCalculatorServiceTest.calculateFareCarWithDiscount(FareCalculatorServiceTest.java:190)
+
+calculateFareUnkownType  Time elapsed: 0 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: Expected java.lang.NullPointerException to be thrown, but nothing was thrown.
+	at com.parkit.parkingsystem.FareCalculatorServiceTest.calculateFareUnkownType(FareCalculatorServiceTest.java:78)
+

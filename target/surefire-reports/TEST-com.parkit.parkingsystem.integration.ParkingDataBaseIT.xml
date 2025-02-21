@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0.007" tests="13" errors="0" skipped="0" failures="3">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.parkit.parkingsystem.integration.ParkingDataBaseIT" time="1.441" tests="3" errors="0" skipped="0" failures="1">
   <properties>
     <property name="java.specification.version" value="22"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -57,29 +57,50 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="66.0"/>
   </properties>
-  <testcase name="calculateFareBikeWithMoreThan24HoursParkingTime" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0"/>
-  <testcase name="calculateFareBikeWithDiscount" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0">
-    <failure message="expected: &lt;0.95&gt; but was: &lt;0.050000000000000044&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <0.95> but was: <0.050000000000000044>
-	at com.parkit.parkingsystem.FareCalculatorServiceTest.calculateFareBikeWithDiscount(FareCalculatorServiceTest.java:204)
+  <testcase name="testParkingLotExitRecurringUser" classname="com.parkit.parkingsystem.integration.ParkingDataBaseIT" time="0.93">
+    <failure message="expected: &lt;1.8000000000000043&gt; but was: &lt;0.0&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <1.8000000000000043> but was: <0.0>
+	at com.parkit.parkingsystem.integration.ParkingDataBaseIT.testParkingLotExitRecurringUser(ParkingDataBaseIT.java:134)
 ]]></failure>
+    <system-out><![CDATA[Please select vehicle type from menu
+1 CAR
+2 BIKE
+pkCAR
+rscom.mysql.cj.jdbc.result.ResultSetImpl@3e5b2630
+Please type the vehicle registration number and press enter key
+Generated Ticket and saved in DB
+Please park your vehicle in spot number:1
+Recorded in-time for vehicle number:ABCDEF is:Fri Feb 21 15:59:34 CET 2025
+Please type the vehicle registration number and press enter key
+Heureux de vous revoir !
+Please type the vehicle registration number and press enter key
+com.mysql.cj.jdbc.result.ResultSetImpl@750c23a3
+PSpotcom.parkit.parkingsystem.model.ParkingSpot@1
+Please pay the parking fare:0.0
+Recorded out-time for vehicle number:ABCDEF is:Fri Feb 21 15:59:34 CET 2025
+Please select vehicle type from menu
+1 CAR
+2 BIKE
+pkCAR
+rscom.mysql.cj.jdbc.result.ResultSetImpl@13018f00
+Please type the vehicle registration number and press enter key
+Generated Ticket and saved in DB
+Please park your vehicle in spot number:1
+Recorded in-time for vehicle number:ABCDEF is:Fri Feb 21 15:59:34 CET 2025
+Please type the vehicle registration number and press enter key
+Heureux de vous revoir !
+com.mysql.cj.jdbc.result.ResultSetImpl@1f365a26
+PSpotcom.parkit.parkingsystem.model.ParkingSpot@1
+Please type the vehicle registration number and press enter key
+com.mysql.cj.jdbc.result.ResultSetImpl@6b32b678
+PSpotcom.parkit.parkingsystem.model.ParkingSpot@1
+Please pay the parking fare:0.0
+Recorded out-time for vehicle number:ABCDEF is:Fri Feb 21 15:59:34 CET 2025
+com.mysql.cj.jdbc.result.ResultSetImpl@1be4a7e3
+PSpotcom.parkit.parkingsystem.model.ParkingSpot@1
+]]></system-out>
+    <system-err><![CDATA[ERROR StatusLogger No Log4j 2 configuration file found. Using default configuration (logging only errors to the console), or user programmatically provided configurations. Set system property 'log4j2.debug' to show Log4j 2 internal initialization logging. See https://logging.apache.org/log4j/2.x/manual/configuration.html for instructions on how to configure Log4j 2
+]]></system-err>
   </testcase>
-  <testcase name="calculateFareCarWithLessThanOneHourParkingTime" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0"/>
-  <testcase name="calculateFareWithNullOutTime" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0"/>
-  <testcase name="calculateFareCarWithDiscount" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0">
-    <failure message="expected: &lt;1.4249999999999998&gt; but was: &lt;0.07500000000000007&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <1.4249999999999998> but was: <0.07500000000000007>
-	at com.parkit.parkingsystem.FareCalculatorServiceTest.calculateFareCarWithDiscount(FareCalculatorServiceTest.java:190)
-]]></failure>
-  </testcase>
-  <testcase name="calculateFareCarWithMoreThan24HoursParkingTime" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0"/>
-  <testcase name="calculateFareUnkownType" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0">
-    <failure message="Expected java.lang.NullPointerException to be thrown, but nothing was thrown." type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: Expected java.lang.NullPointerException to be thrown, but nothing was thrown.
-	at com.parkit.parkingsystem.FareCalculatorServiceTest.calculateFareUnkownType(FareCalculatorServiceTest.java:78)
-</failure>
-  </testcase>
-  <testcase name="calculateFareCar" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0.005"/>
-  <testcase name="calculateFareBike" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0"/>
-  <testcase name="calculateFareBikeWithLess30MinutesParkingTime" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0.001"/>
-  <testcase name="calculateFareCarWithLess30MinutesParkingTime" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0"/>
-  <testcase name="calculateFareCarWithMoreThanADayParkingTime" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0.001"/>
-  <testcase name="calculateFareBikeWithLessThanOneHourParkingTime" classname="com.parkit.parkingsystem.FareCalculatorServiceTest" time="0"/>
+  <testcase name="testParkingLotExit" classname="com.parkit.parkingsystem.integration.ParkingDataBaseIT" time="0.183"/>
+  <testcase name="testParkingService" classname="com.parkit.parkingsystem.integration.ParkingDataBaseIT" time="0.076"/>
 </testsuite>
